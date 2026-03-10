@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Pipe-Filter Architecture Pattern</title>
+		<meta name="description" content="Pipe-Filter Architecture Pattern Presentation" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="css/reset.css" />
+		<link rel="stylesheet" href="css/reveal.scss" />
+		<link rel="stylesheet" href="css/theme/dracula.scss" id="theme" />
+		<link rel="stylesheet" href="plugin/highlight/monokai.css" />
+		<style>
+			.reveal h1, .reveal h2, .reveal h3 { text-transform: none; }
+			.reveal .subtitle { font-size: 0.7em; color: #bd93f9; margin-top: 0.5em; }
+			.reveal .highlight-box { background: rgba(139, 233, 253, 0.1); padding: 20px; border-radius: 10px; border-left: 4px solid #8be9fd; margin: 20px 0; }
+			.reveal .component-box { background: rgba(80, 250, 123, 0.1); padding: 15px; border-radius: 8px; border: 2px solid #50fa7b; margin: 10px; display: inline-block; min-width: 200px; }
+			.reveal .pipe-arrow { color: #ff79c6; font-size: 2em; margin: 0 10px; }
+			.reveal .flow-diagram { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; margin: 30px 0; }
+			.reveal .filter-box { background: linear-gradient(135deg, #6272a4 0%, #44475a 100%); padding: 15px 25px; border-radius: 8px; margin: 5px; }
+			.reveal .pipe-connector { color: #50fa7b; font-size: 1.5em; margin: 0 5px; }
+			.reveal .quote-box { font-style: italic; border-left: 4px solid #ffb86c; padding-left: 20px; margin: 20px 0; }
+			.reveal .advantage { color: #50fa7b; }
+			.reveal .limitation { color: #ff5555; }
+			.reveal code { background: #44475a; padding: 2px 8px; border-radius: 4px; }
+			.reveal .section-title { color: #ff79c6; font-size: 0.6em; text-transform: uppercase; letter-spacing: 3px; }
+		</style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+				<!-- SLIDE 1: Title -->
+				<section data-transition="zoom">
+					<h1>Pipe-Filter Architecture</h1>
+					<p class="subtitle">Software Architecture Pattern</p>
+					<br><br>
+					<p style="font-size: 0.8em;">Simon Sierra</p>
+					<p style="font-size: 0.6em; color: #6272a4;">CPTR-571 • 03/10/2026</p>
+				</section>
+
+				<!-- SLIDE 2: Presentation Overview -->
+				<section data-transition="slide">
+					<h2>What We'll Cover Today</h2>
+					<br>
+					<p class="fragment fade-up">Three main questions about Pipe-Filter Architecture:</p>
+					<br>
+					<ul>
+						<li class="fragment fade-up" style="color: #8be9fd;"><strong>WHAT</strong> — What is the pipe-filter pattern?</li>
+						<li class="fragment fade-up" style="color: #50fa7b;"><strong>WHY</strong> — Why do we use it?</li>
+						<li class="fragment fade-up" style="color: #ffb86c;"><strong>HOW</strong> — How do we implement it in C++?</li>
+					</ul>
+				</section>
+
+				<!-- SLIDE 3: Context Setting -->
+				<section data-transition="slide">
+					<h2>A Pattern You Already Know</h2>
+					<br>
+					<p class="fragment">Pipe-filter is everywhere in software:</p>
+					<br>
+					<ul>
+						<li class="fragment fade-right">Unix command pipelines</li>
+						<li class="fragment fade-right">Data processing systems</li>
+						<li class="fragment fade-right">Compiler architectures</li>
+						<li class="fragment fade-right">Stream processing frameworks</li>
+					</ul>
+				</section>
+
+				<!-- ==================== WHAT SECTION ==================== -->
+				
+				<!-- SLIDE 4: Section Divider - WHAT -->
+				<section data-transition="zoom" data-background-gradient="linear-gradient(135deg, #282a36 0%, #44475a 100%)">
+					<p class="section-title">Part One</p>
+					<h1 style="color: #8be9fd;">WHAT</h1>
+					<p>Understanding the Pattern</p>
+				</section>
+
+				<!-- SLIDE 5: What is Software Architecture -->
+				<section data-transition="slide">
+					<h2>What Is Software Architecture?</h2>
+					<br>
+					<p class="fragment fade-up">Software architecture defines the <span style="color: #8be9fd;">structure</span> of a system</p>
+				</section>
+
+				<!-- SLIDE 6: Architecture Details -->
+				<section data-transition="slide">
+					<h2>Why Architecture Matters</h2>
+					<br>
+					<ul>
+						<li class="fragment fade-up">Determines how components <span style="color: #50fa7b;">interact</span></li>
+						<li class="fragment fade-up">Influences <span style="color: #ffb86c;">scalability</span></li>
+						<li class="fragment fade-up">Affects <span style="color: #ff79c6;">maintainability</span></li>
+						<li class="fragment fade-up">Impacts <span style="color: #8be9fd;">reliability</span></li>
+					</ul>
+				</section>
+
+				<!-- SLIDE 7: Architectural Patterns -->
+				<section data-transition="slide">
+					<h2>Architectural Patterns</h2>
+					<br>
+					<div class="highlight-box fragment">
+						<p>Architectural patterns provide <strong>reusable design solutions</strong></p>
+					</div>
+					<br>
+					<p class="fragment">Pipe-filter is one such pattern...</p>
+					<p class="fragment" style="color: #50fa7b;">...designed specifically for systems that process data through multiple stages</p>
+				</section>
+
+				<!-- SLIDE 8: What is Pipe-Filter -->
+				<section data-transition="slide">
+					<h2>What Is Pipe-Filter Architecture?</h2>
+					<br>
+					<p class="fragment fade-up">An architectural style for <span style="color: #8be9fd;">data processing systems</span></p>
+					<br>
+					<p class="fragment fade-up">Data flows through a <span style="color: #50fa7b;">sequence</span> of processing components</p>
+				</section>
+
+				<!-- SLIDE 9: Filters Explained -->
+				<section data-transition="slide">
+					<h2>Filters</h2>
+					<br>
+					<div class="component-box fragment">
+						<h3 style="color: #50fa7b; margin: 0;">Filter</h3>
+						<p style="margin: 10px 0 0 0; font-size: 0.8em;">Processing Component</p>
+					</div>
+					<br><br>
+					<ul>
+						<li class="fragment fade-up">Receives input data</li>
+						<li class="fragment fade-up">Processes and transforms it</li>
+						<li class="fragment fade-up">Outputs the result</li>
+					</ul>
+				</section>
+
+				<!-- SLIDE 10: Filter Independence -->
+				<section data-transition="slide">
+					<h2>Filter Independence</h2>
+					<br>
+					<div class="highlight-box">
+						<p class="fragment">Each filter performs <span style="color: #ff79c6;">one specific task</span></p>
+						<br>
+						<p class="fragment">Filters are <span style="color: #50fa7b;">independent</span> — they don't need to know how other filters work</p>
+					</div>
+				</section>
+
+				<!-- SLIDE 11: Pipes Explained -->
+				<section data-transition="slide">
+					<h2>Pipes</h2>
+					<br>
+					<div class="flow-diagram">
+						<div class="filter-box fragment">Filter A</div>
+						<span class="pipe-connector fragment">→ <span style="color: #ff79c6;">PIPE</span> →</span>
+						<div class="filter-box fragment">Filter B</div>
+					</div>
+					<br>
+					<p class="fragment fade-up">Pipes are the <span style="color: #ff79c6;">connections</span> between filters</p>
+					<p class="fragment fade-up">They simply <span style="color: #8be9fd;">pass data</span> from one filter to another</p>
+				</section>
+
+				<!-- SLIDE 12: History Section Intro -->
+				<section data-transition="zoom" data-background-gradient="linear-gradient(135deg, #282a36 0%, #44475a 100%)">
+					<p class="section-title">Historical Context</p>
+					<h2>Where Did This Come From?</h2>
+				</section>
+
+				<!-- SLIDE 13: Douglas McIlroy -->
+				<section data-transition="slide">
+					<h2>Douglas McIlroy</h2>
+					<br>
+					<p class="fragment fade-up">Popularized the pipe-filter concept</p>
+					<br>
+					<p class="fragment fade-up" style="color: #6272a4;">Bell Labs, 1960s</p>
+				</section>
+
+				<!-- SLIDE 14: Unix Philosophy -->
+				<section data-transition="slide">
+					<h2>The Unix Philosophy</h2>
+					<br>
+					<div class="quote-box fragment">
+						<p>"Software tools should do <span style="color: #50fa7b;">one thing well</span> and be <span style="color: #8be9fd;">composable</span> with other tools"</p>
+					</div>
+					<br>
+					<p class="fragment" style="font-size: 0.8em; color: #6272a4;">— Douglas McIlroy</p>
+				</section>
+
+				<!-- SLIDE 15: Unix Example -->
+				<section data-transition="slide">
+					<h2>Unix Pipes in Action</h2>
+					<br>
+					<pre class="fragment"><code class="bash" data-trim>
+cat file.txt | grep "error" | sort | uniq
+					</code></pre>
+					<br>
+					<p class="fragment fade-up">Commands chained together using the <code>|</code> pipe symbol</p>
+					<p class="fragment fade-up">Data flows from one program to another</p>
+				</section>
+
+				<!-- SLIDE 16: Legacy -->
+				<section data-transition="slide">
+					<h2>A Lasting Influence</h2>
+					<br>
+					<p class="fragment">This idea became <span style="color: #ffb86c;">foundational</span> in software architecture</p>
+					<br>
+					<p class="fragment">Inspired many modern data processing frameworks:</p>
+					<ul>
+						<li class="fragment fade-right">Apache Kafka</li>
+						<li class="fragment fade-right">Apache Spark</li>
+						<li class="fragment fade-right">ETL Pipelines</li>
+					</ul>
+				</section>
+
+				<!-- SLIDE 17: Key Components Overview -->
+				<section data-transition="zoom" data-background-gradient="linear-gradient(135deg, #282a36 0%, #44475a 100%)">
+					<p class="section-title">Core Concepts</p>
+					<h2>Key Components</h2>
+				</section>
+
+				<!-- SLIDE 18: Three Elements -->
+				<section data-transition="slide">
+					<h2>Three Main Elements</h2>
+					<br>
+					<div class="r-hstack" style="justify-content: space-around;">
+						<div class="component-box fragment fade-up">
+							<h3 style="color: #50fa7b; margin: 0;">Filters</h3>
+							<p style="font-size: 0.7em; margin: 10px 0 0 0;">Processing Units</p>
+						</div>
+						<div class="component-box fragment fade-up">
+							<h3 style="color: #ff79c6; margin: 0;">Pipes</h3>
+							<p style="font-size: 0.7em; margin: 10px 0 0 0;">Data Transport</p>
+						</div>
+						<div class="component-box fragment fade-up">
+							<h3 style="color: #8be9fd; margin: 0;">Data Stream</h3>
+							<p style="font-size: 0.7em; margin: 10px 0 0 0;">Information Flow</p>
+						</div>
+					</div>
+				</section>
+
+				<!-- SLIDE 19: Filters Deep Dive -->
+				<section data-transition="slide">
+					<h2>Filters — Deep Dive</h2>
+					<br>
+					<ul>
+						<li class="fragment fade-up">Independent processing components</li>
+						<li class="fragment fade-up">Perform <span style="color: #50fa7b;">transformations</span> on data</li>
+						<li class="fragment fade-up">Each focuses on a <span style="color: #ff79c6;">single responsibility</span></li>
+						<li class="fragment fade-up">Can be tested in <span style="color: #8be9fd;">isolation</span></li>
+					</ul>
+				</section>
+
+				<!-- SLIDE 20: Pipes Deep Dive -->
+				<section data-transition="slide">
+					<h2>Pipes — Deep Dive</h2>
+					<br>
+					<ul>
+						<li class="fragment fade-up">Connect filters together</li>
+						<li class="fragment fade-up">Carry <span style="color: #ffb86c;">output</span> from one filter to the <span style="color: #8be9fd;">input</span> of the next</li>
+						<li class="fragment fade-up">Define the <span style="color: #50fa7b;">data flow direction</span></li>
+					</ul>
+				</section>
+
+				<!-- SLIDE 21: Data Stream Deep Dive -->
+				<section data-transition="slide">
+					<h2>Data Stream — Deep Dive</h2>
+					<br>
+					<ul>
+						<li class="fragment fade-up">Information flowing through the pipeline</li>
+						<li class="fragment fade-up">Moves from <span style="color: #50fa7b;">input source</span> to <span style="color: #ff79c6;">final output</span></li>
+						<li class="fragment fade-up">Transformed at each stage</li>
+					</ul>
+				</section>
+
+				<!-- SLIDE 22: UML Section -->
+				<section data-transition="zoom" data-background-gradient="linear-gradient(135deg, #282a36 0%, #44475a 100%)">
+					<p class="section-title">Visual Comparison</p>
+					<h2>UML Diagrams</h2>
+				</section>
+
+				<!-- SLIDE 23: Monolithic Intro -->
+				<section data-transition="slide">
+					<h2>Monolithic Architecture</h2>
+					<br>
+					<p class="fragment">Let's first look at the <span style="color: #ff5555;">traditional approach</span></p>
+				</section>
+
+				<!-- SLIDE 24: Monolithic Diagram -->
+				<section data-transition="slide">
+					<h2>Monolithic UML</h2>
+					<br>
+					<div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+						<div class="filter-box" style="background: linear-gradient(135deg, #8be9fd 0%, #6272a4 100%); font-size: 0.75em; padding: 8px 15px;">User Input<br><span style="font-size: 0.7em;">Raw Data</span></div>
+						<span class="pipe-connector" style="font-size: 1.2em;">↓</span>
+						<div style="background: rgba(255, 85, 85, 0.15); border: 2px solid #ff5555; border-radius: 10px; padding: 12px;">
+							<p style="color: #ff5555; margin: 0 0 8px 0; font-weight: bold; font-size: 0.85em;">Monolithic Application</p>
+							<div style="display: flex; align-items: center; justify-content: center; gap: 3px;">
+								<div class="filter-box" style="font-size: 0.65em; padding: 6px 10px;">Read</div>
+								<span class="pipe-connector" style="font-size: 0.9em;">→</span>
+								<div class="filter-box" style="font-size: 0.65em; padding: 6px 10px;">Validate</div>
+								<span class="pipe-connector" style="font-size: 0.9em;">→</span>
+								<div class="filter-box" style="font-size: 0.65em; padding: 6px 10px;">Transform</div>
+								<span class="pipe-connector" style="font-size: 0.9em;">→</span>
+								<div class="filter-box" style="font-size: 0.65em; padding: 6px 10px;">Analyze</div>
+								<span class="pipe-connector" style="font-size: 0.9em;">→</span>
+								<div class="filter-box" style="font-size: 0.65em; padding: 6px 10px;">Format</div>
+							</div>
+						</div>
+						<span class="pipe-connector" style="font-size: 1.2em;">↓</span>
+						<div class="filter-box" style="background: linear-gradient(135deg, #50fa7b 0%, #6272a4 100%); font-size: 0.75em; padding: 8px 15px;">Output<br><span style="font-size: 0.7em;">Report</span></div>
+					</div>
+					<br>
+					<p class="fragment fade-up">All processing logic in a <span style="color: #ff5555;">single application</span></p>
+				</section>
+
+				<!-- SLIDE 25: Monolithic Characteristics -->
+				<section data-transition="slide">
+					<h2>Monolithic Characteristics</h2>
+					<br>
+					<ul>
+						<li class="fragment fade-up">Reading input</li>
+						<li class="fragment fade-up">Validating data</li>
+						<li class="fragment fade-up">Transforming data</li>
+						<li class="fragment fade-up">Generating output</li>
+					</ul>
+					<br><br>
+					<p class="fragment" style="color: #ff5555;">All tightly connected within one system</p>
+				</section>
+
+				<!-- SLIDE 26: Pipe-Filter Intro -->
+				<section data-transition="slide">
+					<h2>Now... Pipe-Filter Architecture</h2>
+					<br>
+					<p class="fragment">The same process, but <span style="color: #50fa7b;">decomposed</span></p>
+				</section>
+
+				<!-- SLIDE 27: Pipe-Filter Diagram -->
+				<section data-transition="slide">
+					<h2>Pipe-Filter UML</h2>
+					<br>
+					<div style="display: flex; align-items: center; justify-content: center; gap: 3px;">
+						<div class="filter-box" style="background: linear-gradient(135deg, #8be9fd 0%, #6272a4 100%); font-size: 0.55em; padding: 5px 8px;">Input</div>
+						<span class="pipe-connector" style="font-size: 0.8em;">→</span>
+						<div class="filter-box" style="font-size: 0.55em; padding: 5px 8px; border: 2px solid #50fa7b;">F1<br>Read</div>
+						<span class="pipe-connector" style="font-size: 0.8em;">→</span>
+						<div class="filter-box" style="font-size: 0.55em; padding: 5px 8px; border: 2px solid #50fa7b;">F2<br>Validate</div>
+						<span class="pipe-connector" style="font-size: 0.8em;">→</span>
+						<div class="filter-box" style="font-size: 0.55em; padding: 5px 8px; border: 2px solid #50fa7b;">F3<br>Transform</div>
+						<span class="pipe-connector" style="font-size: 0.8em;">→</span>
+						<div class="filter-box" style="font-size: 0.55em; padding: 5px 8px; border: 2px solid #50fa7b;">F4<br>Analyze</div>
+						<span class="pipe-connector" style="font-size: 0.8em;">→</span>
+						<div class="filter-box" style="font-size: 0.55em; padding: 5px 8px; border: 2px solid #50fa7b;">F5<br>Format</div>
+						<span class="pipe-connector" style="font-size: 0.8em;">→</span>
+						<div class="filter-box" style="background: linear-gradient(135deg, #50fa7b 0%, #6272a4 100%); font-size: 0.55em; padding: 5px 8px;">Output</div>
+					</div>
+					<br>
+					<p class="fragment fade-up">Separate filters connected by pipes</p>
+				</section>
+
+				<!-- SLIDE 28: Pipe-Filter Benefits Visual -->
+				<section data-transition="slide">
+					<h2>The Difference</h2>
+					<br>
+					<p class="fragment">Instead of <span style="color: #ff5555;">one large program</span>...</p>
+					<br>
+					<p class="fragment">...the system is broken into <span style="color: #50fa7b;">separate filters</span></p>
+					<br>
+					<p class="fragment">Each filter performs <span style="color: #8be9fd;">one step</span> and passes the result</p>
+				</section>
+
+				<!-- SLIDE 29: Easier to Modify -->
+				<section data-transition="slide">
+					<h2>Result?</h2>
+					<br>
+					<div class="highlight-box fragment">
+						<p>Easier to <span style="color: #50fa7b;">modify</span></p>
+						<p>Easier to <span style="color: #8be9fd;">maintain</span></p>
+						<p>Easier to <span style="color: #ffb86c;">test</span></p>
+					</div>
+				</section>
+
+				<!-- ==================== WHY SECTION ==================== -->
+
+				<!-- SLIDE 30: Section Divider - WHY -->
+				<section data-transition="zoom" data-background-gradient="linear-gradient(135deg, #282a36 0%, #44475a 100%)">
+					<p class="section-title">Part Two</p>
+					<h1 style="color: #50fa7b;">WHY</h1>
+					<p>Benefits and Use Cases</p>
+				</section>
+
+				<!-- SLIDE 31: Why Use It -->
+				<section data-transition="slide">
+					<h2>Why Use Pipe-Filter?</h2>
+					<br>
+					<p class="fragment">Several compelling reasons...</p>
+				</section>
+
+				<!-- SLIDE 32: Modularity -->
+				<section data-transition="slide">
+					<h2>Modularity</h2>
+					<br>
+					<div class="highlight-box fragment">
+						<p>Each filter performs <span style="color: #50fa7b;">one task</span></p>
+					</div>
+					<br>
+					<p class="fragment fade-up">Makes the system <span style="color: #8be9fd;">easier to understand</span></p>
+					<p class="fragment fade-up">Reduces <span style="color: #ffb86c;">cognitive load</span></p>
+				</section>
+
+				<!-- SLIDE 33: Reusability -->
+				<section data-transition="slide">
+					<h2>Reusability</h2>
+					<br>
+					<p class="fragment fade-up">A filter designed for <span style="color: #ff79c6;">one pipeline</span>...</p>
+					<br>
+					<p class="fragment fade-up">...can often be reused in <span style="color: #50fa7b;">another pipeline</span></p>
+					<br>
+					<p class="fragment" style="color: #6272a4;">Write once, use many times</p>
+				</section>
+
+				<!-- SLIDE 34: Maintainability -->
+				<section data-transition="slide">
+					<h2>Maintainability</h2>
+					<br>
+					<p class="fragment fade-up">Changes to <span style="color: #8be9fd;">one filter</span>...</p>
+					<br>
+					<p class="fragment fade-up">...typically <span style="color: #50fa7b;">don't affect</span> the rest of the system</p>
+					<br>
+					<p class="fragment" style="color: #ffb86c;">Isolated changes = fewer bugs</p>
+				</section>
+
+				<!-- SLIDE 35: Flexibility -->
+				<section data-transition="slide">
+					<h2>Flexibility</h2>
+					<br>
+					<ul>
+						<li class="fragment fade-up">Filters can be <span style="color: #50fa7b;">rearranged</span></li>
+						<li class="fragment fade-up">Filters can be <span style="color: #ff79c6;">replaced</span></li>
+						<li class="fragment fade-up">New filters can be <span style="color: #8be9fd;">added</span></li>
+					</ul>
+				</section>
+
+				<!-- SLIDE 36: Parallel Processing -->
+				<section data-transition="slide">
+					<h2>Parallel Processing</h2>
+					<br>
+					<div class="highlight-box fragment">
+						<p>Filters can potentially run <span style="color: #50fa7b;">in parallel</span></p>
+					</div>
+					<br>
+					<p class="fragment fade-up">Improves <span style="color: #ffb86c;">performance</span> on multi-core systems</p>
+				</section>
+
+				<!-- SLIDE 37: Real World Section -->
+				<section data-transition="zoom" data-background-gradient="linear-gradient(135deg, #282a36 0%, #44475a 100%)">
+					<p class="section-title">In Practice</p>
+					<h2>Real World Examples</h2>
+				</section>
+
+				<!-- SLIDE 38: Unix Pipelines -->
+				<section data-transition="slide">
+					<h2>Unix Command Pipelines</h2>
+					<br>
+					<pre class="fragment"><code class="bash" data-trim>
+ls -la | grep ".cpp" | wc -l
+					</code></pre>
+					<br>
+					<p class="fragment fade-up">Classic example of pipe-filter in action</p>
+					<p class="fragment fade-up">Each command is a <span style="color: #50fa7b;">filter</span></p>
+				</section>
+
+				<!-- SLIDE 39: Compiler Architecture -->
+				<section data-transition="slide">
+					<h2>Compiler Architecture</h2>
+					<br>
+					<div class="flow-diagram">
+						<div class="filter-box fragment">Lexer</div>
+						<span class="pipe-connector fragment">→</span>
+						<div class="filter-box fragment">Parser</div>
+						<span class="pipe-connector fragment">→</span>
+						<div class="filter-box fragment">Optimizer</div>
+						<span class="pipe-connector fragment">→</span>
+						<div class="filter-box fragment">Code Gen</div>
+					</div>
+					<br>
+					<p class="fragment fade-up">Source code moves through stages</p>
+				</section>
+
+				<!-- SLIDE 40: Image Processing -->
+				<section data-transition="slide">
+					<h2>Image Processing Systems</h2>
+					<br>
+					<div class="flow-diagram">
+						<div class="filter-box fragment">Load</div>
+						<span class="pipe-connector fragment">→</span>
+						<div class="filter-box fragment">Resize</div>
+						<span class="pipe-connector fragment">→</span>
+						<div class="filter-box fragment">Filter</div>
+						<span class="pipe-connector fragment">→</span>
+						<div class="filter-box fragment">Save</div>
+					</div>
+				</section>
+
+				<!-- SLIDE 42: Data Analytics -->
+				<section data-transition="slide">
+					<h2>Data Analytics Pipelines</h2>
+					<br>
+					<div class="flow-diagram">
+						<div class="filter-box fragment">Extract</div>
+						<span class="pipe-connector fragment">→</span>
+						<div class="filter-box fragment">Transform</div>
+						<span class="pipe-connector fragment">→</span>
+						<div class="filter-box fragment">Load</div>
+					</div>
+					<br>
+					<p class="fragment fade-up" style="color: #6272a4;">The famous ETL pattern</p>
+				</section>
+
+				<!-- ==================== HOW SECTION ==================== -->
+
+				<!-- SLIDE 43: Section Divider - HOW -->
+				<section data-transition="zoom" data-background-gradient="linear-gradient(135deg, #282a36 0%, #44475a 100%)">
+					<p class="section-title">Part Three</p>
+					<h1 style="color: #ffb86c;">HOW</h1>
+					<p>Implementation in C++</p>
+				</section>
+
+				<!-- SLIDE 46: Simple Example Intro -->
+				<section data-transition="slide">
+					<h2>Simple Implementation</h2>
+					<br>
+					<p class="fragment">Let's build a text processing pipeline in <span style="color: #ffb86c;">C++</span></p>
+				</section>
+
+				<!-- SLIDE 47: Example Pipeline -->
+				<section data-transition="slide">
+					<h2>Our Example Pipeline</h2>
+					<br>
+					<div class="flow-diagram">
+						<div class="filter-box fragment">Input<br><span style="font-size: 0.7em;">(Pump)</span></div>
+						<span class="pipe-connector fragment">→</span>
+						<div class="filter-box fragment">Remove Punctuation</div>
+						<span class="pipe-connector fragment">→</span>
+						<div class="filter-box fragment">Uppercase</div>
+						<span class="pipe-connector fragment">→</span>
+						<div class="filter-box fragment">Word Count</div>
+						<span class="pipe-connector fragment">→</span>
+						<div class="filter-box fragment">Output<br><span style="font-size: 0.7em;">(Sink)</span></div>
+					</div>
+				</section>
+
+				<!-- SLIDE 48: Each Filter's Job -->
+				<section data-transition="slide">
+					<h2>Each Filter's Responsibility</h2>
+					<br>
+					<ul>
+						<li class="fragment fade-up"><span style="color: #8be9fd;">Input Filter</span> — reads raw text from file (Pump)</li>
+						<li class="fragment fade-up"><span style="color: #50fa7b;">Punctuation Removal</span> — removes all punctuation characters</li>
+						<li class="fragment fade-up"><span style="color: #ffb86c;">Uppercase Converter</span> — converts to uppercase</li>
+						<li class="fragment fade-up"><span style="color: #ff79c6;">Word Counter</span> — counts occurrences of each word</li>
+						<li class="fragment fade-up"><span style="color: #bd93f9;">Output Filter</span> — prints results to console (Sink)</li>
+					</ul>
+				</section>
+
+				<!-- SLIDE 49: C++ Implementation Section -->
+				<section data-transition="zoom" data-background-gradient="linear-gradient(135deg, #282a36 0%, #44475a 100%)">
+					<p class="section-title">Code Time</p>
+					<h2>C++ Implementation</h2>
+				</section>
+
+				<!-- SLIDE 56: Key Takeaways from Code -->
+				<section data-transition="slide">
+					<h2>What We Achieved</h2>
+					<br>
+					<ul>
+						<li class="fragment fade-up"><span style="color: #50fa7b;">Separation of concerns</span> — each filter has one job</li>
+						<li class="fragment fade-up"><span style="color: #8be9fd;">Reusability</span> — filters can be used elsewhere</li>
+						<li class="fragment fade-up"><span style="color: #ffb86c;">Testability</span> — each filter can be tested alone</li>
+						<li class="fragment fade-up"><span style="color: #ff79c6;">Extensibility</span> — easy to add new filters</li>
+					</ul>
+				</section>
+
+				<!-- ==================== ADVANTAGES & LIMITATIONS ==================== -->
+
+				<!-- SLIDE 57: Trade-offs Section -->
+				<section data-transition="zoom" data-background-gradient="linear-gradient(135deg, #282a36 0%, #44475a 100%)">
+					<p class="section-title">Evaluation</p>
+					<h2>Advantages & Limitations</h2>
+				</section>
+
+				<!-- SLIDE 58: Advantages -->
+				<section data-transition="slide">
+					<h2 class="advantage">Advantages</h2>
+					<br>
+					<ul>
+						<li class="fragment fade-up">Modular design</li>
+						<li class="fragment fade-up">Reusable filters</li>
+						<li class="fragment fade-up">Easier debugging</li>
+						<li class="fragment fade-up">Flexible pipelines</li>
+						<li class="fragment fade-up">Supports parallel execution</li>
+					</ul>
+				</section>
+
+				<!-- SLIDE 59: Limitations -->
+				<section data-transition="slide">
+					<h2 class="limitation">Limitations</h2>
+					<br>
+					<ul>
+						<li class="fragment fade-up">Data format must remain <span style="color: #ffb86c;">compatible</span> between filters</li>
+						<li class="fragment fade-up">May introduce <span style="color: #ff5555;">overhead</span> from data passing</li>
+						<li class="fragment fade-up">Not ideal for <span style="color: #6272a4;">interactive</span> systems</li>
+					</ul>
+				</section>
+
+				<!-- SLIDE 60: When to Use -->
+				<section data-transition="slide">
+					<h2>When to Use Pipe-Filter</h2>
+					<br>
+					<div class="highlight-box">
+						<p class="fragment">✓ Data processing applications</p>
+						<p class="fragment">✓ Batch processing systems</p>
+						<p class="fragment">✓ Stream processing</p>
+						<p class="fragment">✓ When stages are independent</p>
+					</div>
+				</section>
+
+				<!-- SLIDE 61: When NOT to Use -->
+				<section data-transition="slide">
+					<h2>When to Avoid</h2>
+					<br>
+					<div class="highlight-box" style="border-left-color: #ff5555;">
+						<p class="fragment">✗ Highly interactive systems</p>
+						<p class="fragment">✗ When filters need shared state</p>
+						<p class="fragment">✗ Real-time systems with strict latency</p>
+					</div>
+				</section>
+
+				<!-- ==================== CONCLUSION ==================== -->
+
+			</div>
+		</div>
+
+		<script type="module">
+			import Reveal from 'reveal.js';
+			import RevealZoom from 'reveal.js/plugin/zoom';
+			import RevealNotes from 'reveal.js/plugin/notes';
+			import RevealSearch from 'reveal.js/plugin/search';
+			import RevealMarkdown from 'reveal.js/plugin/markdown';
+			import RevealHighlight from 'reveal.js/plugin/highlight';
+
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				center: true,
+				hash: true,
+				transition: 'slide',
+				transitionSpeed: 'default',
+				backgroundTransition: 'fade',
+				
+				plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight],
+			});
+		</script>
+	</body>
+</html>
