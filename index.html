@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="dist/reset.css" />
   <link rel="stylesheet" href="dist/reveal.css" />
   <link rel="stylesheet" href="dist/theme/dracula.css" id="theme" />
-  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="dist/plugin/highlight/monokai.css" />
 
   <style>
     .reveal h1, .reveal h2, .reveal h3 { text-transform: none; }
@@ -637,14 +637,13 @@ ls -la | grep ".cpp" | wc -l
 			</div>
 		</div>
 
-		<script type="module">
-			import Reveal from 'reveal.js';
-			import RevealZoom from 'reveal.js/plugin/zoom';
-			import RevealNotes from 'reveal.js/plugin/notes';
-			import RevealSearch from 'reveal.js/plugin/search';
-			import RevealMarkdown from 'reveal.js/plugin/markdown';
-			import RevealHighlight from 'reveal.js/plugin/highlight';
-
+		<script src="dist/reveal.js"></script>
+		<script src="dist/plugin/zoom.js"></script>
+		<script src="dist/plugin/notes.js"></script>
+		<script src="dist/plugin/search.js"></script>
+		<script src="dist/plugin/markdown.js"></script>
+		<script src="dist/plugin/highlight.js"></script>
+		<script>
 			Reveal.initialize({
 				controls: true,
 				progress: true,
@@ -653,8 +652,7 @@ ls -la | grep ".cpp" | wc -l
 				transition: 'slide',
 				transitionSpeed: 'default',
 				backgroundTransition: 'fade',
-				
-				plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight],
+				plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight]
 			});
 		</script>
 	</body>
